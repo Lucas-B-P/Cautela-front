@@ -1,0 +1,88 @@
+.assinar-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 0;
+}
+
+.assinar-page h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.assinar-page h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.cautela-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.info-row {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-row strong {
+  min-width: 150px;
+  color: #555;
+}
+
+.info-row span {
+  color: #333;
+}
+
+.signature-container {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background: white;
+  margin: 20px 0;
+  overflow: hidden;
+}
+
+.signature-canvas {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: crosshair;
+}
+
+.signature-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.assinatura-preview {
+  text-align: center;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .signature-canvas {
+    width: 100% !important;
+    height: 200px !important;
+  }
+  
+  .info-row {
+    flex-direction: column;
+  }
+  
+  .info-row strong {
+    min-width: auto;
+    margin-bottom: 5px;
+  }
+}
+
