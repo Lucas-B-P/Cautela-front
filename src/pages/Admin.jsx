@@ -281,10 +281,94 @@ function Admin() {
           </form>
         </div>
 
+        {/* Barra de Busca e Filtros */}
         <div className="card">
-          <h2>Cautelas Criadas</h2>
+          <h2>Buscar e Filtrar Cautelas</h2>
+          <div className="filters-container">
+            <div className="search-group">
+              <label htmlFor="busca">🔍 Buscar:</label>
+              <input
+                type="text"
+                id="busca"
+                placeholder="Buscar por material, descrição, responsável ou email..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            
+            <div className="filters-row">
+              <div className="filter-group">
+                <label htmlFor="filtroStatus">Status:</label>
+                <select
+                  id="filtroStatus"
+                  value={filtroStatus}
+                  onChange={(e) => setFiltroStatus(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="todos">Todos</option>
+                  <option value="pendente">Pendente</option>
+                  <option value="cautelado">Cautelado</option>
+                  <option value="descautelado">Descautelado</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label htmlFor="filtroTipo">Tipo:</label>
+                <select
+                  id="filtroTipo"
+                  value={filtroTipo}
+                  onChange={(e) => setFiltroTipo(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="todos">Todos</option>
+                  <option value="permanente">Permanente</option>
+                  <option value="consumivel">Consumível</option>
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label htmlFor="ordenacao">Ordenar por:</label>
+                <select
+                  id="ordenacao"
+                  value={ordenacao}
+                  onChange={(e) => setOrdenacao(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="recente">Mais Recente</option>
+                  <option value="antiga">Mais Antiga</option>
+                  <option value="material">Material (A-Z)</option>
+                  <option value="responsavel">Responsável (A-Z)</option>
+                </select>
+              </div>
+            </div>
+
+            {busca || filtroStatus !== 'todos' || filtroTipo !== 'todos' ? (
+              <div className="results-info">
+                Mostrando {cautelasFiltradas.length} de {cautelas.length} cautela(s)
+                <button 
+                  className="btn-clear-filters"
+                  onClick={() => {
+                    setBusca('');
+                    setFiltroStatus('todos');
+                    setFiltroTipo('todos');
+                  }}
+                >
+                  Limpar Filtros
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Lista de Cautelas */}
+        <div className="card">
+          <h2>Lista de Cautelas ({cautelasFiltradas.length})</h2>
           {cautelas.length === 0 ? (
             <p className="loading">Nenhuma cautela criada ainda.</p>
+          ) : cautelasFiltradas.length === 0 ? (
+            <p className="loading">Nenhuma cautela encontrada com os filtros aplicados.</p>
           ) : (
             <table className="table">
               <thead>
