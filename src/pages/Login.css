@@ -63,6 +63,15 @@
   border-radius: 0 !important;
   outline: none !important;
   display: block;
+  /* Remover fundo da imagem se houver */
+  mix-blend-mode: normal;
+  image-rendering: auto;
+}
+
+/* Remover qualquer fundo branco ou quadrado da imagem */
+.logo-img[src*="logo-bda"] {
+  background: transparent !important;
+  filter: none !important;
 }
 
 .logo h1 {
