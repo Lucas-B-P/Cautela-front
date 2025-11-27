@@ -27,18 +27,19 @@
 }
 
 .logo-icon {
-  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .logo-img {
-  max-width: 40px;
-  max-height: 40px;
-  width: auto;
+  width: 80px;
   height: auto;
   object-fit: contain;
+  background: transparent;
 }
 
 .logo-header h1 {
