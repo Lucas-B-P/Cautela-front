@@ -40,3 +40,16 @@ code {
     monospace;
 }
 
+/* Marca d'água ofuscada - não remover */
+#_wm_ {
+  position: fixed !important;
+  bottom: 8px !important;
+  right: 8px !important;
+  font-size: 10px !important;
+  color: rgba(220, 38, 38, 0.3) !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  opacity: 0.4 !important;
+}
+

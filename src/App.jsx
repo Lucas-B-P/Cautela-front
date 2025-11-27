@@ -1,3 +1,4 @@
+// RGVzZW52b2x2aWRvIHBvciBTZCBCb3JiYSAtIDTigJpCZGEgQyBNZWMgLSAyMDI1
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from 'axios';
@@ -6,6 +7,7 @@ import Admin from './pages/Admin';
 import Assinar from './pages/Assinar';
 import Historico from './pages/Historico';
 import ProtectedRoute from './components/ProtectedRoute';
+import Watermark from './components/Watermark';
 import { getToken, logout, isTokenExpired } from './utils/auth';
 import { API_URL } from './config/api';
 import './App.css';
@@ -46,6 +48,7 @@ function App() {
 
   return (
     <Router>
+      <Watermark />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route 
