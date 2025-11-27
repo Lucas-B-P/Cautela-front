@@ -31,6 +31,10 @@
 
 .logo {
   color: white;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 .logo-icon {
@@ -52,6 +56,9 @@
   border: none !important;
   padding: 0 !important;
   box-shadow: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  display: block;
 }
 
 .logo h1 {
