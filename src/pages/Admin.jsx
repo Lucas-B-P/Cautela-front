@@ -46,13 +46,25 @@ function Admin() {
 
     // Filtro por busca (material, descrição, responsável)
     if (busca.trim()) {
-      const termoBusca = busca.toLowerCase();
-      resultado = resultado.filter(cautela => 
-        cautela.material?.toLowerCase().includes(termoBusca) ||
-        cautela.descricao?.toLowerCase().includes(termoBusca) ||
-        cautela.responsavel_nome?.toLowerCase().includes(termoBusca) ||
-        cautela.responsavel_email?.toLowerCase().includes(termoBusca)
-      );
+      const termoBusca = busca.toLowerCase().trim();
+      resultado = resultado.filter(cautela => {
+        // Buscar em material
+        const material = (cautela.material || '').toString().toLowerCase();
+        // Buscar em descrição
+        const descricao = (cautela.descricao || '').toString().toLowerCase();
+        // Buscar em nome do responsável
+        const responsavelNome = (cautela.responsavel_nome || '').toString().toLowerCase();
+        // Buscar em email do responsável
+        const responsavelEmail = (cautela.responsavel_email || '').toString().toLowerCase();
+        // Buscar em quantidade (convertida para string)
+        const quantidade = (cautela.quantidade || '').toString();
+        
+        return material.includes(termoBusca) ||
+               descricao.includes(termoBusca) ||
+               responsavelNome.includes(termoBusca) ||
+               responsavelEmail.includes(termoBusca) ||
+               quantidade.includes(termoBusca);
+      });
     }
 
     // Filtro por status
