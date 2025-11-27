@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config/api';
 import './Admin.css';
 
 function Admin() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     material: '',
     descricao: '',
+    tipo_material: 'permanente',
     quantidade: '',
     responsavel_nome: '',
     responsavel_email: ''
@@ -43,6 +46,7 @@ function Admin() {
       setFormData({
         material: '',
         descricao: '',
+        tipo_material: 'permanente',
         quantidade: '',
         responsavel_nome: '',
         responsavel_email: ''
@@ -72,6 +76,31 @@ function Admin() {
     setTimeout(() => setMessage({ type: '', text: '' }), 2000);
   };
 
+  const descautelar = async (cautelaId) => {
+    if (!window.confirm('Deseja gerar link de descautela para esta cautela?')) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/cautelas/${cautelaId}/descautelar`);
+      setMessage({ 
+        type: 'success', 
+        text: `Link de descautela gerado! Link: ${response.data.link_assinatura}` 
+      });
+      carregarCautelas();
+    } catch (error) {
+      console.error('Erro ao descautelar:', error);
+      setMessage({ 
+        type: 'error', 
+        text: error.response?.data?.error || 'Erro ao descautelar' 
+      });
+    }
+  };
+
+  const verHistorico = (cautelaId) => {
+    navigate(`/historico/${cautelaId}`);
+  };
+
   return (
     <div className="admin-page">
       <div className="container">
@@ -97,6 +126,24 @@ function Admin() {
                 required
                 placeholder="Ex: Notebook Dell"
               />
+            </div>
+
+            <div className="form-group">
+              <label>Tipo de Material *</label>
+              <select
+                name="tipo_material"
+                value={formData.tipo_material}
+                onChange={handleChange}
+                required
+              >
+                <option value="permanente">Permanente (será devolvido)</option>
+                <option value="consumivel">Consumível (não será devolvido)</option>
+              </select>
+              <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+                {formData.tipo_material === 'permanente' 
+                  ? 'Material que será devolvido após o uso' 
+                  : 'Material que será consumido e não precisa ser devolvido'}
+              </small>
             </div>
 
             <div className="form-group">
@@ -161,6 +208,7 @@ function Admin() {
               <thead>
                 <tr>
                   <th>Material</th>
+                  <th>Tipo</th>
                   <th>Responsável</th>
                   <th>Quantidade</th>
                   <th>Status</th>
@@ -172,6 +220,11 @@ function Admin() {
                 {cautelas.map((cautela) => (
                   <tr key={cautela.id}>
                     <td>{cautela.material}</td>
+                    <td>
+                      <span className={`status-badge ${cautela.tipo_material === 'permanente' ? 'status-assinado' : 'status-pendente'}`}>
+                        {cautela.tipo_material === 'permanente' ? 'Permanente' : 'Consumível'}
+                      </span>
+                    </td>
                     <td>{cautela.responsavel_nome}</td>
                     <td>{cautela.quantidade}</td>
                     <td>
@@ -183,13 +236,34 @@ function Admin() {
                       {new Date(cautela.data_criacao).toLocaleString('pt-BR')}
                     </td>
                     <td>
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => copiarLink(cautela.link_assinatura)}
-                        style={{ fontSize: '14px', padding: '6px 12px' }}
-                      >
-                        Copiar Link
-                      </button>
+                      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => copiarLink(cautela.link_assinatura)}
+                          style={{ fontSize: '12px', padding: '4px 8px' }}
+                          title="Copiar link de assinatura"
+                        >
+                          Link
+                        </button>
+                        {cautela.tipo_material === 'permanente' && cautela.status === 'assinado' && (
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => descautelar(cautela.id)}
+                            style={{ fontSize: '12px', padding: '4px 8px' }}
+                            title="Gerar link de descautela"
+                          >
+                            Descautelar
+                          </button>
+                        )}
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => verHistorico(cautela.id)}
+                          style={{ fontSize: '12px', padding: '4px 8px' }}
+                          title="Ver histórico"
+                        >
+                          Histórico
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
