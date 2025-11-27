@@ -42,6 +42,16 @@ function Admin() {
     }
   };
 
+  // Função auxiliar para normalizar texto (remover acentos e espaços extras)
+  const normalizarTexto = (texto) => {
+    if (!texto) return '';
+    return String(texto)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+      .trim();
+  };
+
   // Função para filtrar e ordenar cautelas
   useEffect(() => {
     if (!cautelas || cautelas.length === 0) {
@@ -53,20 +63,16 @@ function Admin() {
 
     // Filtro por busca (material, descrição, responsável)
     if (busca && busca.trim()) {
-      const termoBusca = busca.toLowerCase().trim();
+      const termoBusca = normalizarTexto(busca);
       resultado = resultado.filter(cautela => {
         if (!cautela) return false;
         
-        // Buscar em material
-        const material = String(cautela.material || '').toLowerCase();
-        // Buscar em descrição
-        const descricao = String(cautela.descricao || '').toLowerCase();
-        // Buscar em nome do responsável
-        const responsavelNome = String(cautela.responsavel_nome || '').toLowerCase();
-        // Buscar em email do responsável
-        const responsavelEmail = String(cautela.responsavel_email || '').toLowerCase();
-        // Buscar em quantidade (convertida para string)
-        const quantidade = String(cautela.quantidade || '');
+        // Normalizar todos os campos para busca
+        const material = normalizarTexto(cautela.material);
+        const descricao = normalizarTexto(cautela.descricao);
+        const responsavelNome = normalizarTexto(cautela.responsavel_nome);
+        const responsavelEmail = normalizarTexto(cautela.responsavel_email);
+        const quantidade = String(cautela.quantidade || '').trim();
         
         return material.includes(termoBusca) ||
                descricao.includes(termoBusca) ||
