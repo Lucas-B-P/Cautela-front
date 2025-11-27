@@ -38,16 +38,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: none;
-  padding: 0;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 .logo-img {
-  width: 200px;
+  width: 230px;
   height: auto;
   object-fit: contain;
-  background: transparent;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 .logo h1 {
