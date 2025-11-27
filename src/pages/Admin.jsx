@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { API_URL } from '../config/api';
 import { getUser, logout } from '../utils/auth';
 import logoBda from '../img/logo-bda.png';
@@ -25,6 +26,7 @@ function Admin() {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [ordenacao, setOrdenacao] = useState('recente');
+  const [qrCodeModal, setQrCodeModal] = useState({ open: false, link: '', material: '' });
 
   useEffect(() => {
     carregarCautelas();
@@ -157,6 +159,14 @@ function Admin() {
     navigator.clipboard.writeText(link);
     setMessage({ type: 'success', text: 'Link copiado para a área de transferência!' });
     setTimeout(() => setMessage({ type: '', text: '' }), 2000);
+  };
+
+  const abrirQRCode = (link, material) => {
+    setQrCodeModal({ open: true, link, material });
+  };
+
+  const fecharQRCode = () => {
+    setQrCodeModal({ open: false, link: '', material: '' });
   };
 
   const descautelar = async (cautelaId) => {
@@ -470,6 +480,48 @@ function Admin() {
           )}
         </div>
       </div>
+
+      {/* Modal de QR Code */}
+      {qrCodeModal.open && (
+        <div className="modal-overlay" onClick={fecharQRCode}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>QR Code - {qrCodeModal.material}</h2>
+              <button className="modal-close" onClick={fecharQRCode}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="qr-code-container">
+                <QRCodeSVG 
+                  value={qrCodeModal.link} 
+                  size={256}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
+              <div className="qr-link-container">
+                <p className="qr-link-label">Link de assinatura:</p>
+                <div className="qr-link-input-group">
+                  <input 
+                    type="text" 
+                    value={qrCodeModal.link} 
+                    readOnly 
+                    className="qr-link-input"
+                  />
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => copiarLink(qrCodeModal.link)}
+                  >
+                    Copiar
+                  </button>
+                </div>
+              </div>
+              <p className="qr-instructions">
+                Escaneie o QR Code com seu celular para acessar a página de assinatura
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
