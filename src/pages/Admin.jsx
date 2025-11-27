@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config/api';
+import { getUser, logout } from '../utils/auth';
 import './Admin.css';
 
 function Admin() {
   const navigate = useNavigate();
+  const user = getUser();
   const [formData, setFormData] = useState({
     material: '',
     descricao: '',
@@ -104,10 +106,36 @@ function Admin() {
     navigate(`/historico/${cautelaId}`);
   };
 
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API_URL}/auth/logout`);
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      logout();
+    }
+  };
+
   return (
     <div className="admin-page">
       <div className="container">
-        <h1>Sistema de Cautela de Materiais</h1>
+        <header className="admin-header">
+          <div className="header-left">
+            <div className="logo-header">
+              <span className="logo-icon">🔒</span>
+              <h1>Cautela</h1>
+            </div>
+            <p className="header-subtitle">Sistema de Gestão de Materiais</p>
+          </div>
+          <div className="header-right">
+            <div className="user-info">
+              <span className="user-name">{user?.nome_completo || user?.username}</span>
+              <button className="btn-logout" onClick={handleLogout}>
+                Sair
+              </button>
+            </div>
+          </div>
+        </header>
         
         <div className="card">
           <h2>Criar Nova Cautela</h2>
