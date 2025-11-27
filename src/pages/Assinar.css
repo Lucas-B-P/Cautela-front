@@ -165,7 +165,35 @@
   font-weight: 500;
 }
 
+/* Media Queries - Responsividade */
+@media (max-width: 1024px) {
+  .assinar-page .container {
+    max-width: 100%;
+  }
+  
+  .signature-canvas {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
+  .assinar-page {
+    padding: 20px 15px;
+  }
+  
+  .assinar-page h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .assinar-page h2 {
+    font-size: 1.25rem;
+  }
+  
+  .assinar-page .card {
+    padding: 20px;
+  }
+  
   .signature-canvas {
     width: 100% !important;
     height: 200px !important;
@@ -173,11 +201,66 @@
   
   .info-row {
     flex-direction: column;
+    gap: 5px;
   }
   
   .info-row strong {
     min-width: auto;
     margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  .info-row span {
+    font-size: 14px;
+  }
+  
+  .signature-actions {
+    flex-direction: column;
+  }
+  
+  .assinar-page .btn {
+    width: 100%;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 16px; /* Previne zoom no iOS */
+  }
+}
+
+@media (max-width: 480px) {
+  .assinar-page {
+    padding: 15px 10px;
+  }
+  
+  .assinar-page h1 {
+    font-size: 1.5rem;
+  }
+  
+  .assinar-page h2 {
+    font-size: 1.1rem;
+  }
+  
+  .assinar-page .card {
+    padding: 15px;
+  }
+  
+  .signature-container {
+    padding: 10px;
+  }
+  
+  .signature-canvas {
+    height: 150px !important;
+  }
+  
+  .info-row {
+    padding: 10px;
+  }
+  
+  .assinar-page .btn {
+    padding: 10px 16px;
+    font-size: 14px;
   }
 }
 

@@ -266,3 +266,159 @@
   color: #6b7280;
   padding: 20px;
 }
+
+/* Media Queries - Responsividade */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  
+  .table {
+    font-size: 13px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 15px;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    align-items: flex-start;
+  }
+  
+  .header-left {
+    width: 100%;
+  }
+  
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .logo-header h1 {
+    font-size: 24px;
+  }
+  
+  .header-subtitle {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  
+  .card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  
+  .table thead {
+    display: none;
+  }
+  
+  .table tbody,
+  .table tr,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table tr {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table td {
+    border: none;
+    padding: 8px 0;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  .table td:before {
+    content: attr(data-label) ": ";
+    font-weight: 600;
+    color: #dc2626;
+    display: inline-block;
+    min-width: 120px;
+  }
+  
+  .table td .status-badge {
+    display: inline-block;
+    margin-top: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    font-size: 16px; /* Previne zoom no iOS */
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .btn:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-page {
+    padding: 10px;
+  }
+  
+  .admin-header {
+    padding: 15px;
+  }
+  
+  .logo-header h1 {
+    font-size: 20px;
+  }
+  
+  .logo-icon {
+    font-size: 24px;
+  }
+  
+  .card {
+    padding: 15px;
+  }
+  
+  .admin-page h2 {
+    font-size: 1.25rem;
+  }
+  
+  .btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  
+  .table td {
+    font-size: 13px;
+  }
+}

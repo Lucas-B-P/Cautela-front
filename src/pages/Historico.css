@@ -1,6 +1,6 @@
 .historico-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #7f1d1d 100%);
   padding: 20px;
 }
 
@@ -24,9 +24,10 @@
 
 .historico-page .card h2 {
   margin-top: 0;
-  color: #333;
-  border-bottom: 2px solid #667eea;
+  color: #dc2626;
+  border-bottom: 2px solid #dc2626;
   padding-bottom: 10px;
+  font-weight: 600;
 }
 
 .cautela-info {
@@ -80,7 +81,8 @@
 
 .assinatura-header h3 {
   margin: 0;
-  color: #667eea;
+  color: #dc2626;
+  font-weight: 600;
 }
 
 .data-assinatura {
@@ -166,12 +168,12 @@
 }
 
 .btn-primary {
-  background: #667eea;
+  background: #dc2626;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #5568d3;
+  background: #b91c1c;
 }
 
 .btn-secondary {
@@ -181,5 +183,109 @@
 
 .btn-secondary:hover {
   background: #5a6268;
+}
+
+/* Media Queries - Responsividade */
+@media (max-width: 1024px) {
+  .historico-page .container {
+    max-width: 100%;
+  }
+  
+  .cautela-info {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .historico-page {
+    padding: 15px;
+  }
+  
+  .historico-page h1 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .historico-page .card {
+    padding: 15px;
+  }
+  
+  .historico-page .card h2 {
+    font-size: 1.25rem;
+  }
+  
+  .cautela-info {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .info-row strong {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  
+  .info-row span {
+    text-align: left;
+  }
+  
+  .assinatura-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .assinatura-item {
+    padding: 12px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .btn:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .historico-page {
+    padding: 10px;
+  }
+  
+  .historico-page h1 {
+    font-size: 1.25rem;
+  }
+  
+  .historico-page .card {
+    padding: 12px;
+  }
+  
+  .historico-page .card h2 {
+    font-size: 1.1rem;
+  }
+  
+  .info-row {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .assinatura-header h3 {
+    font-size: 1rem;
+  }
+  
+  .data-assinatura {
+    font-size: 0.8em;
+  }
+  
+  .assinatura-preview img {
+    max-width: 100%;
+  }
 }
 
