@@ -1,6 +1,7 @@
+// RGVzZW52b2x2aWRvIHBvciBTZCBCb3JiYSAtIDTigJpCZGEgQyBNZWMgLSAyMDI1
 import { useEffect } from 'react';
 
-
+// Marca d'água ofuscada - difícil de remover
 const Watermark = () => {
   useEffect(() => {
    
