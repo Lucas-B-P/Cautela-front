@@ -32,11 +32,13 @@ function Admin() {
   const carregarCautelas = async () => {
     try {
       const response = await axios.get(`${API_URL}/cautelas`);
-      setCautelas(response.data);
-      setCautelasFiltradas(response.data);
+      const dados = response.data || [];
+      setCautelas(dados);
+      // O useEffect vai atualizar cautelasFiltradas automaticamente
     } catch (error) {
       console.error('Erro ao carregar cautelas:', error);
       setMessage({ type: 'error', text: 'Erro ao carregar cautelas' });
+      setCautelas([]);
     }
   };
 
