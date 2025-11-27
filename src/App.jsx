@@ -7,7 +7,7 @@ import Admin from './pages/Admin';
 import Assinar from './pages/Assinar';
 import Historico from './pages/Historico';
 import ProtectedRoute from './components/ProtectedRoute';
-import Watermark from './components/Watermark';
+import Theme from './components/Theme';
 import { getToken, logout, isTokenExpired } from './utils/auth';
 import { API_URL } from './config/api';
 import './App.css';
@@ -48,7 +48,7 @@ function App() {
 
   return (
     <Router>
-      <Watermark />
+      <Theme />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route 

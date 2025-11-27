@@ -1,8 +1,8 @@
 // RGVzZW52b2x2aWRvIHBvciBTZCBCb3JiYSAtIDTigJpCZGEgQyBNZWMgLSAyMDI1
 import { useEffect } from 'react';
 
-// Marca d'água ofuscada - difícil de remover
-const Watermark = () => {
+// Componente de tema e estilos globais
+const Theme = () => {
   useEffect(() => {
    
     const createWatermark = () => {
@@ -75,5 +75,5 @@ const Watermark = () => {
   return null;
 };
 
-export default Watermark;
+export default Theme;
 
