@@ -276,7 +276,7 @@ function Admin() {
                         >
                           Link
                         </button>
-                        {cautela.tipo_material === 'permanente' && cautela.status === 'assinado' && (
+                        {cautela.tipo_material === 'permanente' && cautela.status === 'cautelado' && (
                           <button
                             className="btn btn-primary"
                             onClick={() => descautelar(cautela.id)}

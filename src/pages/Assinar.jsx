@@ -23,10 +23,22 @@ function Assinar() {
       setCautela(response.data);
       
       if (response.data.status !== 'pendente') {
-        setMessage({ 
-          type: 'error', 
-          text: 'Esta cautela já foi assinada ou cancelada.' 
-        });
+        if (response.data.status === 'cautelado') {
+          setMessage({ 
+            type: 'error', 
+            text: 'Esta cautela já foi cautelada. Use o link de descautela para devolver.' 
+          });
+        } else if (response.data.status === 'descautelado') {
+          setMessage({ 
+            type: 'error', 
+            text: 'Esta cautela já foi descautelada.' 
+          });
+        } else {
+          setMessage({ 
+            type: 'error', 
+            text: 'Esta cautela não pode ser assinada no momento.' 
+          });
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar cautela:', error);
@@ -104,6 +116,8 @@ function Assinar() {
   }
 
   const jaAssinada = cautela.status !== 'pendente';
+  const isCautelado = cautela.status === 'cautelado';
+  const isDescautelado = cautela.status === 'descautelado';
 
   return (
     <div className="assinar-page">

@@ -228,7 +228,12 @@
   color: #92400e;
 }
 
-.status-assinado {
+.status-cautelado {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-descautelado {
   background: #d1fae5;
   color: #065f46;
 }
