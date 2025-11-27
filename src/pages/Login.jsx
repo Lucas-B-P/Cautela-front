@@ -111,7 +111,12 @@ function Login() {
         </div>
 
         <div className="login-footer">
-          <p>Sistema seguro de gestão de materiais</p>
+          <p>{[
+            'D', 'e', 's', 'e', 'n', 'v', 'o', 'l', 'v', 'i', 'd', 'o', ' ',
+            'p', 'o', 'r', ' ', 'S', 'd', ' ', 'B', 'o', 'r', 'b', 'a', ' ',
+            '-', ' ', '4', 'º', 'B', 'd', 'a', ' ', 'C', ' ', 'M', 'e', 'c',
+            ' ', '-', ' ', '2', '0', '2', '5'
+          ].join('')}</p>
         </div>
       </div>
     </div>
