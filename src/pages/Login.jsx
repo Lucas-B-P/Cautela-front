@@ -55,7 +55,7 @@ function Login() {
             <div className="logo-icon">
               <img src={logoBda} alt="Logo BDA" className="logo-img" />
             </div>
-            <h1>Cautela</h1>
+            <h1>SisGeMat</h1>
             <p className="logo-subtitle">Sistema de Gestão de Materiais</p>
           </div>
         </div>

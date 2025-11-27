@@ -206,7 +206,7 @@ function Admin() {
               <span className="logo-icon">
                 <img src={logoBda} alt="Logo BDA" className="logo-img" />
               </span>
-              <h1>Cautela</h1>
+              <h1>SisGeMat</h1>
             </div>
             <p className="header-subtitle">Sistema de Gestão de Materiais</p>
           </div>
