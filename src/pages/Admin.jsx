@@ -44,22 +44,29 @@ function Admin() {
 
   // Função para filtrar e ordenar cautelas
   useEffect(() => {
+    if (!cautelas || cautelas.length === 0) {
+      setCautelasFiltradas([]);
+      return;
+    }
+
     let resultado = [...cautelas];
 
     // Filtro por busca (material, descrição, responsável)
-    if (busca.trim()) {
+    if (busca && busca.trim()) {
       const termoBusca = busca.toLowerCase().trim();
       resultado = resultado.filter(cautela => {
+        if (!cautela) return false;
+        
         // Buscar em material
-        const material = (cautela.material || '').toString().toLowerCase();
+        const material = String(cautela.material || '').toLowerCase();
         // Buscar em descrição
-        const descricao = (cautela.descricao || '').toString().toLowerCase();
+        const descricao = String(cautela.descricao || '').toLowerCase();
         // Buscar em nome do responsável
-        const responsavelNome = (cautela.responsavel_nome || '').toString().toLowerCase();
+        const responsavelNome = String(cautela.responsavel_nome || '').toLowerCase();
         // Buscar em email do responsável
-        const responsavelEmail = (cautela.responsavel_email || '').toString().toLowerCase();
+        const responsavelEmail = String(cautela.responsavel_email || '').toLowerCase();
         // Buscar em quantidade (convertida para string)
-        const quantidade = (cautela.quantidade || '').toString();
+        const quantidade = String(cautela.quantidade || '');
         
         return material.includes(termoBusca) ||
                descricao.includes(termoBusca) ||
@@ -70,28 +77,30 @@ function Admin() {
     }
 
     // Filtro por status
-    if (filtroStatus !== 'todos') {
-      resultado = resultado.filter(cautela => cautela.status === filtroStatus);
+    if (filtroStatus && filtroStatus !== 'todos') {
+      resultado = resultado.filter(cautela => cautela && cautela.status === filtroStatus);
     }
 
     // Filtro por tipo de material
-    if (filtroTipo !== 'todos') {
-      resultado = resultado.filter(cautela => cautela.tipo_material === filtroTipo);
+    if (filtroTipo && filtroTipo !== 'todos') {
+      resultado = resultado.filter(cautela => cautela && cautela.tipo_material === filtroTipo);
     }
 
     // Ordenação
     resultado.sort((a, b) => {
-      const dataA = new Date(a.data_criacao);
-      const dataB = new Date(b.data_criacao);
+      if (!a || !b) return 0;
+      
+      const dataA = new Date(a.data_criacao || 0);
+      const dataB = new Date(b.data_criacao || 0);
       
       if (ordenacao === 'recente') {
         return dataB - dataA; // Mais recente primeiro
       } else if (ordenacao === 'antiga') {
         return dataA - dataB; // Mais antiga primeiro
       } else if (ordenacao === 'material') {
-        return (a.material || '').localeCompare(b.material || '');
+        return String(a.material || '').localeCompare(String(b.material || ''));
       } else if (ordenacao === 'responsavel') {
-        return (a.responsavel_nome || '').localeCompare(b.responsavel_nome || '');
+        return String(a.responsavel_nome || '').localeCompare(String(b.responsavel_nome || ''));
       }
       return 0;
     });
