@@ -82,7 +82,9 @@ function Admin() {
     }
 
     try {
+      console.log('Descautelar - ID:', cautelaId, 'Tipo:', typeof cautelaId);
       const response = await axios.post(`${API_URL}/cautelas/${cautelaId}/descautelar`);
+      console.log('Resposta do descautelar:', response.data);
       setMessage({ 
         type: 'success', 
         text: `Link de descautela gerado! Link: ${response.data.link_assinatura}` 
@@ -90,9 +92,10 @@ function Admin() {
       carregarCautelas();
     } catch (error) {
       console.error('Erro ao descautelar:', error);
+      console.error('Resposta do erro:', error.response?.data);
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.error || 'Erro ao descautelar' 
+        text: error.response?.data?.error || `Erro ao descautelar: ${error.message}` 
       });
     }
   };
