@@ -445,14 +445,26 @@ function Admin() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                        <button
-                          className="btn btn-secondary"
-                          onClick={() => copiarLink(cautela.link_assinatura)}
-                          style={{ fontSize: '12px', padding: '4px 8px' }}
-                          title="Copiar link de assinatura"
-                        >
-                          Link
-                        </button>
+                        {cautela.link_assinatura && (
+                          <>
+                            <button
+                              className="btn btn-secondary"
+                              onClick={() => copiarLink(cautela.link_assinatura)}
+                              style={{ fontSize: '12px', padding: '4px 8px' }}
+                              title="Copiar link de assinatura"
+                            >
+                              Link
+                            </button>
+                            <button
+                              className="btn btn-secondary"
+                              onClick={() => abrirQRCode(cautela.link_assinatura, cautela.material)}
+                              style={{ fontSize: '12px', padding: '4px 8px' }}
+                              title="Gerar QR Code do link"
+                            >
+                              QR Code
+                            </button>
+                          </>
+                        )}
                         {cautela.tipo_material === 'permanente' && cautela.status === 'cautelado' && (
                           <button
                             className="btn btn-primary"
