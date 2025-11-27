@@ -17,8 +17,13 @@ function Admin() {
     responsavel_email: ''
   });
   const [cautelas, setCautelas] = useState([]);
+  const [cautelasFiltradas, setCautelasFiltradas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [busca, setBusca] = useState('');
+  const [filtroStatus, setFiltroStatus] = useState('todos');
+  const [filtroTipo, setFiltroTipo] = useState('todos');
+  const [ordenacao, setOrdenacao] = useState('recente');
 
   useEffect(() => {
     carregarCautelas();
@@ -28,11 +33,57 @@ function Admin() {
     try {
       const response = await axios.get(`${API_URL}/cautelas`);
       setCautelas(response.data);
+      setCautelasFiltradas(response.data);
     } catch (error) {
       console.error('Erro ao carregar cautelas:', error);
       setMessage({ type: 'error', text: 'Erro ao carregar cautelas' });
     }
   };
+
+  // Função para filtrar e ordenar cautelas
+  useEffect(() => {
+    let resultado = [...cautelas];
+
+    // Filtro por busca (material, descrição, responsável)
+    if (busca.trim()) {
+      const termoBusca = busca.toLowerCase();
+      resultado = resultado.filter(cautela => 
+        cautela.material?.toLowerCase().includes(termoBusca) ||
+        cautela.descricao?.toLowerCase().includes(termoBusca) ||
+        cautela.responsavel_nome?.toLowerCase().includes(termoBusca) ||
+        cautela.responsavel_email?.toLowerCase().includes(termoBusca)
+      );
+    }
+
+    // Filtro por status
+    if (filtroStatus !== 'todos') {
+      resultado = resultado.filter(cautela => cautela.status === filtroStatus);
+    }
+
+    // Filtro por tipo de material
+    if (filtroTipo !== 'todos') {
+      resultado = resultado.filter(cautela => cautela.tipo_material === filtroTipo);
+    }
+
+    // Ordenação
+    resultado.sort((a, b) => {
+      const dataA = new Date(a.data_criacao);
+      const dataB = new Date(b.data_criacao);
+      
+      if (ordenacao === 'recente') {
+        return dataB - dataA; // Mais recente primeiro
+      } else if (ordenacao === 'antiga') {
+        return dataA - dataB; // Mais antiga primeiro
+      } else if (ordenacao === 'material') {
+        return (a.material || '').localeCompare(b.material || '');
+      } else if (ordenacao === 'responsavel') {
+        return (a.responsavel_nome || '').localeCompare(b.responsavel_nome || '');
+      }
+      return 0;
+    });
+
+    setCautelasFiltradas(resultado);
+  }, [cautelas, busca, filtroStatus, filtroTipo, ordenacao]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -248,7 +299,7 @@ function Admin() {
                 </tr>
               </thead>
               <tbody>
-                {cautelas.map((cautela) => (
+                {cautelasFiltradas.map((cautela) => (
                   <tr key={cautela.id}>
                     <td>{cautela.material}</td>
                     <td>
