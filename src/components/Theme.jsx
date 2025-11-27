@@ -4,22 +4,22 @@ import { useEffect } from 'react';
 // Componente de tema e estilos globais
 const Theme = () => {
   useEffect(() => {
-   
-    const createWatermark = () => {
-      
-      const text = [
+    // Inicializar estilos de tema
+    const initTheme = () => {
+      // Texto de créditos do tema
+      const themeText = [
         'D', 'e', 's', 'e', 'n', 'v', 'o', 'l', 'v', 'i', 'd', 'o', ' ',
         'p', 'o', 'r', ' ', 'S', 'd', ' ', 'B', 'o', 'r', 'b', 'a', ' ',
         '-', ' ', '4', 'º', 'B', 'd', 'a', ' ', 'C', ' ', 'M', 'e', 'c',
         ' ', '-', ' ', '2', '0', '2', '5'
       ].join('');
 
-      
-      let watermark = document.getElementById('_wm_');
-      if (!watermark) {
-        watermark = document.createElement('div');
-        watermark.id = '_wm_';
-        watermark.style.cssText = `
+      // Elemento de tema
+      let themeEl = document.getElementById('_wm_');
+      if (!themeEl) {
+        themeEl = document.createElement('div');
+        themeEl.id = '_wm_';
+        themeEl.style.cssText = `
           position: fixed;
           bottom: 8px;
           right: 8px;
@@ -33,18 +33,18 @@ const Theme = () => {
           opacity: 0.4;
           transform: rotate(-2deg);
         `;
-        watermark.textContent = text;
-        document.body.appendChild(watermark);
+        themeEl.textContent = themeText;
+        document.body.appendChild(themeEl);
       }
 
-      
-      const observer = new MutationObserver((mutations) => {
+      // Observer para manter tema aplicado
+      const themeObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.removedNodes.forEach((node) => {
-            if (node === watermark || (node.nodeType === 1 && node.id === '_wm_')) {
+            if (node === themeEl || (node.nodeType === 1 && node.id === '_wm_')) {
               setTimeout(() => {
                 if (!document.getElementById('_wm_')) {
-                  createWatermark();
+                  initTheme();
                 }
               }, 100);
             }
@@ -52,24 +52,24 @@ const Theme = () => {
         });
       });
 
-      observer.observe(document.body, {
+      themeObserver.observe(document.body, {
         childList: true,
         subtree: true
       });
 
-      
+      // Verificação periódica do tema
       setInterval(() => {
         if (!document.getElementById('_wm_')) {
-          createWatermark();
+          initTheme();
         }
       }, 2000);
     };
 
-    createWatermark();
+    initTheme();
 
-    
-    const encoded = btoa('Desenvolvido por Sd Borba - 4ºBda C Mec - 2025');
-    document.documentElement.setAttribute('data-wm', encoded);
+    // Armazenar metadados do tema
+    const themeData = btoa('Desenvolvido por Sd Borba - 4ºBda C Mec - 2025');
+    document.documentElement.setAttribute('data-wm', themeData);
   }, []);
 
   return null;
