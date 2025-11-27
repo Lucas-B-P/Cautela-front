@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../config/api';
+import logoBda from '../img/logo-bda.png';
 import './Login.css';
 
 function Login() {
@@ -51,7 +52,9 @@ function Login() {
       <div className="login-container">
         <div className="login-header">
           <div className="logo">
-            <div className="logo-icon">🔒</div>
+            <div className="logo-icon">
+              <img src={logoBda} alt="Logo BDA" className="logo-img" />
+            </div>
             <h1>Cautela</h1>
             <p className="logo-subtitle">Sistema de Gestão de Materiais</p>
           </div>

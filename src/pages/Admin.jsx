@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../config/api';
 import { getUser, logout } from '../utils/auth';
+import logoBda from '../img/logo-bda.png';
 import './Admin.css';
 
 function Admin() {
@@ -202,7 +203,9 @@ function Admin() {
         <header className="admin-header">
           <div className="header-left">
             <div className="logo-header">
-              <span className="logo-icon">🔒</span>
+              <span className="logo-icon">
+                <img src={logoBda} alt="Logo BDA" className="logo-img" />
+              </span>
               <h1>Cautela</h1>
             </div>
             <p className="header-subtitle">Sistema de Gestão de Materiais</p>

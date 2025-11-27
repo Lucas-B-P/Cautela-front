@@ -37,6 +37,17 @@
   font-size: 64px;
   margin-bottom: 10px;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-img {
+  max-width: 80px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
 
 .logo h1 {
