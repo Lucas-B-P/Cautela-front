@@ -10,6 +10,9 @@ function Historico() {
   const [historico, setHistorico] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [busca, setBusca] = useState('');
+  const [filtroTipo, setFiltroTipo] = useState('todos');
+  const [ordenacao, setOrdenacao] = useState('recente');
 
   useEffect(() => {
     carregarHistorico();
@@ -56,7 +59,41 @@ function Historico() {
     );
   }
 
-  const { cautela, assinaturas, total_assinaturas } = historico;
+  const { cautela, assinaturas: assinaturasOriginais, total_assinaturas } = historico;
+
+  // Filtrar e ordenar assinaturas
+  let assinaturasFiltradas = [...assinaturasOriginais];
+
+  // Filtro por busca (nome, cargo)
+  if (busca.trim()) {
+    const termoBusca = busca.toLowerCase();
+    assinaturasFiltradas = assinaturasFiltradas.filter(assinatura =>
+      assinatura.nome?.toLowerCase().includes(termoBusca) ||
+      assinatura.cargo?.toLowerCase().includes(termoBusca)
+    );
+  }
+
+  // Filtro por tipo de assinatura
+  if (filtroTipo !== 'todos') {
+    assinaturasFiltradas = assinaturasFiltradas.filter(assinatura =>
+      assinatura.tipo_assinatura === filtroTipo
+    );
+  }
+
+  // Ordenação
+  assinaturasFiltradas.sort((a, b) => {
+    const dataA = new Date(a.data_assinatura);
+    const dataB = new Date(b.data_assinatura);
+
+    if (ordenacao === 'recente') {
+      return dataB - dataA; // Mais recente primeiro
+    } else if (ordenacao === 'antiga') {
+      return dataA - dataB; // Mais antiga primeiro
+    } else if (ordenacao === 'nome') {
+      return (a.nome || '').localeCompare(b.nome || '');
+    }
+    return 0;
+  });
 
   return (
     <div className="historico-page">
@@ -134,11 +171,76 @@ function Historico() {
         {/* Histórico de Assinaturas */}
         <div className="card">
           <h2>Histórico de Assinaturas ({total_assinaturas})</h2>
-          {assinaturas.length === 0 ? (
+          
+          {/* Barra de Busca e Filtros */}
+          {assinaturasOriginais.length > 0 && (
+            <div className="filters-container">
+              <div className="search-group">
+                <label htmlFor="busca-assinaturas">🔍 Buscar:</label>
+                <input
+                  type="text"
+                  id="busca-assinaturas"
+                  placeholder="Buscar por nome ou cargo..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              
+              <div className="filters-row">
+                <div className="filter-group">
+                  <label htmlFor="filtroTipo">Tipo:</label>
+                  <select
+                    id="filtroTipo"
+                    value={filtroTipo}
+                    onChange={(e) => setFiltroTipo(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="todos">Todos</option>
+                    <option value="cautela">Cautela</option>
+                    <option value="descautela">Descautela</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label htmlFor="ordenacao">Ordenar por:</label>
+                  <select
+                    id="ordenacao"
+                    value={ordenacao}
+                    onChange={(e) => setOrdenacao(e.target.value)}
+                    className="filter-select"
+                  >
+                    <option value="recente">Mais Recente</option>
+                    <option value="antiga">Mais Antiga</option>
+                    <option value="nome">Nome (A-Z)</option>
+                  </select>
+                </div>
+              </div>
+
+              {(busca || filtroTipo !== 'todos') && (
+                <div className="results-info">
+                  Mostrando {assinaturasFiltradas.length} de {assinaturasOriginais.length} assinatura(s)
+                  <button 
+                    className="btn-clear-filters"
+                    onClick={() => {
+                      setBusca('');
+                      setFiltroTipo('todos');
+                    }}
+                  >
+                    Limpar Filtros
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {assinaturasOriginais.length === 0 ? (
             <p className="loading">Nenhuma assinatura registrada ainda.</p>
+          ) : assinaturasFiltradas.length === 0 ? (
+            <p className="loading">Nenhuma assinatura encontrada com os filtros aplicados.</p>
           ) : (
             <div className="assinaturas-list">
-              {assinaturas.map((assinatura, index) => (
+              {assinaturasFiltradas.map((assinatura, index) => (
                 <div key={assinatura.id} className="assinatura-item">
                   <div className="assinatura-header">
                     <h3>
