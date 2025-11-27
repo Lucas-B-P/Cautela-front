@@ -2,9 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import SignatureCanvas from 'react-signature-canvas';
 import axios from 'axios';
+import { API_URL } from '../config/api';
 import './Assinar.css';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 function Assinar() {
   const { uuid } = useParams();
