@@ -476,6 +476,20 @@
     font-size: 16px; /* Previne zoom no iOS */
   }
   
+  .filters-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .results-info {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .btn-clear-filters {
+    width: 100%;
+  }
+  
   .btn {
     width: 100%;
     margin-bottom: 10px;
