@@ -76,12 +76,22 @@
 }
 
 .signature-canvas {
-  width: 100%;
-  height: auto;
+  width: 100% !important;
+  height: auto !important;
   border: 1px solid #dc2626;
   border-radius: 4px;
   cursor: crosshair;
   background: white;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Garantir que o canvas não seja redimensionado incorretamente */
+.signature-container canvas {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 .signature-actions {
@@ -250,8 +260,20 @@
     padding: 10px;
   }
   
+  .signature-container {
+    padding: 8px;
+  }
+
   .signature-canvas {
-    height: 150px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 150px;
+  }
+
+  .signature-container canvas {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 150px;
   }
   
   .info-row {

@@ -12,6 +12,7 @@ function Assinar() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const signatureRef = useRef(null);
+  const signatureContainerRef = useRef(null);
   const [fotoBase64, setFotoBase64] = useState(null);
   const [mostrarCamera, setMostrarCamera] = useState(false);
   const videoRef = useRef(null);
@@ -20,6 +21,40 @@ function Assinar() {
   useEffect(() => {
     carregarCautela();
   }, [uuid]);
+
+  // Ajustar tamanho do canvas para mobile
+  useEffect(() => {
+    const ajustarCanvas = () => {
+      if (signatureRef.current && signatureContainerRef.current) {
+        const container = signatureContainerRef.current;
+        const canvas = signatureRef.current.getCanvas();
+        
+        if (canvas && container) {
+          const containerWidth = container.offsetWidth - 30; // Descontar padding
+          const containerHeight = Math.min(300, window.innerHeight * 0.3);
+          
+          // Ajustar tamanho interno do canvas para corresponder ao tamanho visual
+          canvas.width = containerWidth;
+          canvas.height = containerHeight;
+          
+          // Redesenhar se houver conteúdo
+          signatureRef.current.fromDataURL(signatureRef.current.toDataURL());
+        }
+      }
+    };
+
+    // Ajustar ao montar e ao redimensionar
+    ajustarCanvas();
+    window.addEventListener('resize', ajustarCanvas);
+    
+    // Ajustar após um pequeno delay para garantir que o DOM está pronto
+    const timeoutId = setTimeout(ajustarCanvas, 100);
+
+    return () => {
+      window.removeEventListener('resize', ajustarCanvas);
+      clearTimeout(timeoutId);
+    };
+  }, [cautela]);
 
   const carregarCautela = async () => {
     try {
@@ -315,16 +350,27 @@ function Assinar() {
                 Por favor, assine o documento desenhando no campo abaixo. Esta assinatura é obrigatória.
               </p>
               
-              <div className="signature-container">
+              <div 
+                className="signature-container"
+                ref={signatureContainerRef}
+              >
                 <SignatureCanvas
                   ref={signatureRef}
                   canvasProps={{
                     className: 'signature-canvas',
-                    width: 800,
-                    height: 300
+                    width: typeof window !== 'undefined' && window.innerWidth < 768 
+                      ? Math.min(window.innerWidth - 100, 600)
+                      : 800,
+                    height: typeof window !== 'undefined' && window.innerWidth < 768 
+                      ? Math.min(300, window.innerHeight * 0.3)
+                      : 300
                   }}
                   backgroundColor="#ffffff"
                   penColor="#000000"
+                  velocityFilterWeight={0.7}
+                  minWidth={1.5}
+                  maxWidth={3}
+                  throttle={16}
                 />
               </div>
 
