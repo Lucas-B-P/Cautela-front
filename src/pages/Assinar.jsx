@@ -22,36 +22,52 @@ function Assinar() {
     carregarCautela();
   }, [uuid]);
 
-  // Ajustar tamanho do canvas para mobile
+  // Ajustar tamanho do canvas para mobile - corrigir calibração de toque
   useEffect(() => {
+    if (!cautela || cautela.status !== 'pendente') return;
+
     const ajustarCanvas = () => {
       if (signatureRef.current && signatureContainerRef.current) {
         const container = signatureContainerRef.current;
         const canvas = signatureRef.current.getCanvas();
         
         if (canvas && container) {
-          const containerWidth = container.offsetWidth - 30; // Descontar padding
-          const containerHeight = Math.min(300, window.innerHeight * 0.3);
+          // Obter dimensões reais do container (descontando padding e bordas)
+          const containerRect = container.getBoundingClientRect();
+          const containerWidth = containerRect.width - 30; // Padding + borda
+          const containerHeight = window.innerWidth < 768 
+            ? Math.min(250, window.innerHeight * 0.25)
+            : 300;
           
-          // Ajustar tamanho interno do canvas para corresponder ao tamanho visual
+          // Ajustar tamanho interno do canvas para corresponder exatamente ao tamanho visual
+          // Isso corrige o problema de calibração no mobile
+          const currentData = signatureRef.current.isEmpty() 
+            ? null 
+            : signatureRef.current.toDataURL();
+          
           canvas.width = containerWidth;
           canvas.height = containerHeight;
           
-          // Redesenhar se houver conteúdo
-          signatureRef.current.fromDataURL(signatureRef.current.toDataURL());
+          // Restaurar conteúdo se houver
+          if (currentData) {
+            signatureRef.current.fromDataURL(currentData);
+          }
         }
       }
     };
 
-    // Ajustar ao montar e ao redimensionar
-    ajustarCanvas();
-    window.addEventListener('resize', ajustarCanvas);
+    // Ajustar após um delay para garantir que o DOM está renderizado
+    const timeoutId = setTimeout(ajustarCanvas, 200);
     
-    // Ajustar após um pequeno delay para garantir que o DOM está pronto
-    const timeoutId = setTimeout(ajustarCanvas, 100);
+    // Ajustar ao redimensionar
+    window.addEventListener('resize', ajustarCanvas);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(ajustarCanvas, 300);
+    });
 
     return () => {
       window.removeEventListener('resize', ajustarCanvas);
+      window.removeEventListener('orientationchange', ajustarCanvas);
       clearTimeout(timeoutId);
     };
   }, [cautela]);
