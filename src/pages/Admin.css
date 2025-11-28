@@ -243,6 +243,18 @@
   background: #f9fafb;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  font-size: 12px;
+  padding: 6px 12px;
+  min-width: 80px;
+}
+
 .status-badge {
   display: inline-block;
   padding: 4px 12px;
