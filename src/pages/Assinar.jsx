@@ -64,6 +64,12 @@ function Assinar() {
   const iniciarCamera = async () => {
     try {
       setMessage({ type: '', text: '' });
+      
+      // Parar qualquer stream existente primeiro
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
           facingMode: 'user', // Câmera frontal
@@ -71,25 +77,39 @@ function Assinar() {
           height: { ideal: 480 }
         } 
       });
-      streamRef.current = stream;
-      setMostrarCamera(true);
       
-      // Aguardar um pouco para garantir que o video element está pronto
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+      streamRef.current = stream;
+      
+      // Configurar o vídeo antes de mostrar
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.onloadedmetadata = () => {
           videoRef.current.play().catch(err => {
             console.error('Erro ao reproduzir vídeo:', err);
           });
-        }
-      }, 100);
+        };
+      }
+      
+      setMostrarCamera(true);
     } catch (error) {
       console.error('Erro ao acessar câmera:', error);
+      let errorMessage = 'Erro ao acessar a câmera. ';
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage += 'Permissão negada. Por favor, permita o acesso à câmera nas configurações do navegador.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage += 'Nenhuma câmera encontrada.';
+      } else {
+        errorMessage += 'Verifique as permissões e tente novamente.';
+      }
       setMessage({ 
         type: 'error', 
-        text: 'Erro ao acessar a câmera. Verifique as permissões e tente novamente.' 
+        text: errorMessage
       });
       setMostrarCamera(false);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
     }
   };
 
@@ -171,8 +191,21 @@ function Assinar() {
   // Atualizar video quando mostrarCamera mudar
   useEffect(() => {
     if (mostrarCamera && videoRef.current && streamRef.current) {
-      videoRef.current.srcObject = streamRef.current;
-      videoRef.current.play().catch(err => {
+      const video = videoRef.current;
+      const stream = streamRef.current;
+      
+      if (video.srcObject !== stream) {
+        video.srcObject = stream;
+      }
+      
+      video.onloadedmetadata = () => {
+        video.play().catch(err => {
+          console.error('Erro ao reproduzir vídeo:', err);
+        });
+      };
+      
+      // Tentar reproduzir imediatamente também
+      video.play().catch(err => {
         console.error('Erro ao reproduzir vídeo:', err);
       });
     }
@@ -325,22 +358,43 @@ function Assinar() {
 
               {mostrarCamera && (
                 <div className="camera-container">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    muted
-                    style={{
-                      width: '100%',
-                      maxWidth: '640px',
-                      border: '2px solid #dc2626',
-                      borderRadius: '8px',
-                      marginBottom: '15px',
-                      backgroundColor: '#000',
-                      minHeight: '300px',
-                      objectFit: 'cover'
-                    }}
-                  />
+                  <div style={{ 
+                    width: '100%', 
+                    maxWidth: '640px', 
+                    position: 'relative',
+                    border: '2px solid #dc2626',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    backgroundColor: '#000',
+                    minHeight: '300px',
+                    marginBottom: '15px'
+                  }}>
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        minHeight: '300px',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }}
+                    />
+                    {!streamRef.current && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        color: 'white',
+                        textAlign: 'center'
+                      }}>
+                        Carregando câmera...
+                      </div>
+                    )}
+                  </div>
                   <div className="camera-actions">
                     <button
                       className="btn btn-secondary"
@@ -352,7 +406,7 @@ function Assinar() {
                     <button
                       className="btn btn-success"
                       onClick={capturarFoto}
-                      disabled={submitting}
+                      disabled={submitting || !streamRef.current}
                     >
                       📸 Capturar Foto
                     </button>
@@ -389,7 +443,12 @@ function Assinar() {
                 <button
                   className="btn btn-success"
                   onClick={handleSubmit}
-                  disabled={submitting || !signatureRef.current?.isEmpty === false || !fotoBase64}
+                  disabled={
+                    submitting || 
+                    !signatureRef.current || 
+                    signatureRef.current.isEmpty() || 
+                    !fotoBase64
+                  }
                   style={{ 
                     width: '100%', 
                     fontSize: '18px', 
@@ -417,10 +476,10 @@ function Assinar() {
                     textAlign: 'center',
                     fontWeight: '500'
                   }}>
-                    {!signatureRef.current || signatureRef.current.isEmpty()
-                      ? !fotoBase64
-                        ? '⚠️ Complete a assinatura e tire uma foto para continuar'
-                        : '⚠️ Complete a assinatura para continuar'
+                    {(!signatureRef.current || signatureRef.current.isEmpty()) && !fotoBase64
+                      ? '⚠️ Complete a assinatura e tire uma foto para continuar'
+                      : !signatureRef.current || signatureRef.current.isEmpty()
+                      ? '⚠️ Complete a assinatura para continuar'
                       : '⚠️ Tire uma foto para continuar'}
                   </p>
                 )}
