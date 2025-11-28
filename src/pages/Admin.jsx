@@ -221,6 +221,15 @@ function Admin() {
             <p className="header-subtitle">Sistema de Gestão de Materiais</p>
           </div>
           <div className="header-right">
+            <div className="header-actions">
+              <button 
+                className="btn btn-secondary"
+                onClick={() => navigate('/usuarios')}
+                style={{ marginRight: '10px' }}
+              >
+                Usuários
+              </button>
+            </div>
             <div className="user-info">
               <span className="user-name">{user?.nome_completo || user?.username}</span>
               <button className="btn-logout" onClick={handleLogout}>
