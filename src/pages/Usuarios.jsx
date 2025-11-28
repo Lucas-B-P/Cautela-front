@@ -30,14 +30,19 @@ function Usuarios() {
   const carregarUsuarios = async () => {
     try {
       setLoading(true);
+      setMessage({ type: '', text: '' });
       const response = await axios.get(`${API_URL}/users`);
-      setUsuarios(response.data);
+      setUsuarios(response.data || []);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          'Erro ao carregar usuários. Verifique se você tem permissão de administrador.';
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.error || 'Erro ao carregar usuários' 
+        text: errorMessage
       });
+      setUsuarios([]);
     } finally {
       setLoading(false);
     }

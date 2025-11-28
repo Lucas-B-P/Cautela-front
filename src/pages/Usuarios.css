@@ -346,7 +346,56 @@
   border-top: 1px solid #e5e7eb;
 }
 
+@media (max-width: 1024px) {
+  .usuarios-table-container {
+    overflow-x: auto;
+  }
+
+  .usuarios-table {
+    min-width: 800px;
+  }
+}
+
 @media (max-width: 768px) {
+  .usuarios-page {
+    padding: 10px;
+  }
+
+  .usuarios-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px 20px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .logo-header h1 {
+    font-size: 24px;
+  }
+
+  .header-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    width: 100%;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .usuarios-container {
     padding: 15px;
   }
@@ -357,29 +406,153 @@
     gap: 15px;
   }
 
-  .usuarios-header h1 {
+  .usuarios-header h2 {
     font-size: 24px;
   }
 
+  .usuarios-header .btn {
+    width: 100%;
+  }
+
+  .usuarios-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .usuarios-table {
-    font-size: 14px;
+    font-size: 12px;
+    min-width: 700px;
   }
 
   .usuarios-table th,
   .usuarios-table td {
-    padding: 8px;
+    padding: 8px 6px;
+  }
+
+  .usuarios-table th:first-child,
+  .usuarios-table td:first-child {
+    padding-left: 8px;
+  }
+
+  .usuarios-table th:last-child,
+  .usuarios-table td:last-child {
+    padding-right: 8px;
   }
 
   .action-buttons {
     flex-direction: column;
+    gap: 4px;
   }
 
   .action-buttons .btn {
     width: 100%;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .role-badge,
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
   }
 
   .modal-content {
-    max-width: 90%;
+    max-width: 95%;
+    margin: 10px;
+  }
+
+  .modal-header {
+    padding: 15px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 16px; /* Previne zoom no iOS */
+    padding: 12px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .usuarios-page {
+    padding: 5px;
+  }
+
+  .usuarios-page-header {
+    padding: 10px 15px;
+  }
+
+  .logo-img {
+    width: 60px !important;
+  }
+
+  .logo-header h1 {
+    font-size: 20px;
+  }
+
+  .usuarios-container {
+    padding: 10px;
+  }
+
+  .usuarios-header h2 {
+    font-size: 20px;
+  }
+
+  .usuarios-table {
+    font-size: 11px;
+    min-width: 600px;
+  }
+
+  .usuarios-table th,
+  .usuarios-table td {
+    padding: 6px 4px;
+  }
+
+  .message {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    margin: 5px;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 12px 15px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 15px;
   }
 }
 
