@@ -561,6 +561,17 @@
   
   .table td {
     font-size: 13px;
+    padding: 10px 0;
+  }
+
+  .table td:before {
+    font-size: 12px;
+    min-width: 80px;
+  }
+
+  .btn-sm {
+    font-size: 11px;
+    padding: 5px 10px;
   }
 }
 

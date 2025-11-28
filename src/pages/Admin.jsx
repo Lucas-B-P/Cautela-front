@@ -436,38 +436,39 @@ function Admin() {
               <tbody>
                 {cautelasFiltradas.map((cautela) => (
                   <tr key={cautela.id}>
-                    <td>{cautela.material}</td>
-                    <td>
+                    <td data-label="Material">{cautela.material || '-'}</td>
+                    <td data-label="Tipo">
                       <span className={`status-badge ${cautela.tipo_material === 'permanente' ? 'status-assinado' : 'status-pendente'}`}>
                         {cautela.tipo_material === 'permanente' ? 'Permanente' : 'Consumível'}
                       </span>
                     </td>
-                    <td>{cautela.responsavel_nome}</td>
-                    <td>{cautela.quantidade}</td>
-                    <td>
+                    <td data-label="Responsável">{cautela.responsavel_nome || cautela.responsavel || '-'}</td>
+                    <td data-label="Quantidade">{cautela.quantidade || '-'}</td>
+                    <td data-label="Status">
                       <span className={`status-badge status-${cautela.status}`}>
-                        {cautela.status}
+                        {cautela.status === 'pendente' ? 'Pendente' : 
+                         cautela.status === 'cautelado' ? 'Cautelado' :
+                         cautela.status === 'descautelado' ? 'Descautelado' :
+                         cautela.status === 'cancelado' ? 'Cancelado' : cautela.status}
                       </span>
                     </td>
-                    <td>
-                      {new Date(cautela.data_criacao).toLocaleString('pt-BR')}
+                    <td data-label="Data Criação">
+                      {cautela.data_criacao ? new Date(cautela.data_criacao).toLocaleString('pt-BR') : '-'}
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                    <td data-label="Ações">
+                      <div className="action-buttons">
                         {cautela.link_assinatura && (
                           <>
                             <button
-                              className="btn btn-secondary"
+                              className="btn btn-secondary btn-sm"
                               onClick={() => copiarLink(cautela.link_assinatura)}
-                              style={{ fontSize: '12px', padding: '4px 8px' }}
                               title="Copiar link de assinatura"
                             >
                               Link
                             </button>
                             <button
-                              className="btn btn-secondary"
+                              className="btn btn-secondary btn-sm"
                               onClick={() => abrirQRCode(cautela.link_assinatura, cautela.material)}
-                              style={{ fontSize: '12px', padding: '4px 8px' }}
                               title="Gerar QR Code do link"
                             >
                               QR Code
@@ -476,18 +477,16 @@ function Admin() {
                         )}
                         {cautela.tipo_material === 'permanente' && cautela.status === 'cautelado' && (
                           <button
-                            className="btn btn-primary"
+                            className="btn btn-primary btn-sm"
                             onClick={() => descautelar(cautela.id)}
-                            style={{ fontSize: '12px', padding: '4px 8px' }}
                             title="Gerar link de descautela"
                           >
                             Descautelar
                           </button>
                         )}
                         <button
-                          className="btn btn-secondary"
+                          className="btn btn-secondary btn-sm"
                           onClick={() => verHistorico(cautela.id)}
-                          style={{ fontSize: '12px', padding: '4px 8px' }}
                           title="Ver histórico"
                         >
                           Histórico
