@@ -73,6 +73,13 @@
   margin: 20px 0;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+  position: relative;
+  /* Prevenir scroll durante desenho */
+  touch-action: pan-y;
+}
+
+.signature-container:active {
+  touch-action: none;
 }
 
 .signature-canvas {
@@ -82,10 +89,13 @@
   border-radius: 4px;
   cursor: crosshair;
   background: white;
-  touch-action: none;
+  touch-action: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+  /* Prevenir scroll durante desenho */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 /* Garantir que o canvas não seja redimensionado incorretamente */

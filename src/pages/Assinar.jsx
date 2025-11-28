@@ -26,7 +26,14 @@ function Assinar() {
   useEffect(() => {
     if (!cautela || cautela.status !== 'pendente') return;
 
+    let isScrolling = false;
+    let scrollTimeout = null;
+    let resizeTimeout = null;
+
     const ajustarCanvas = () => {
+      // Não ajustar durante scroll
+      if (isScrolling) return;
+
       if (signatureRef.current && signatureContainerRef.current) {
         const container = signatureContainerRef.current;
         const canvas = signatureRef.current.getCanvas();
@@ -39,36 +46,60 @@ function Assinar() {
             ? Math.min(250, window.innerHeight * 0.25)
             : 300;
           
-          // Ajustar tamanho interno do canvas para corresponder exatamente ao tamanho visual
-          // Isso corrige o problema de calibração no mobile
-          const currentData = signatureRef.current.isEmpty() 
-            ? null 
-            : signatureRef.current.toDataURL();
+          // Só ajustar se as dimensões mudaram significativamente
+          const widthChanged = Math.abs(canvas.width - containerWidth) > 5;
+          const heightChanged = Math.abs(canvas.height - containerHeight) > 5;
           
-          canvas.width = containerWidth;
-          canvas.height = containerHeight;
-          
-          // Restaurar conteúdo se houver
-          if (currentData) {
-            signatureRef.current.fromDataURL(currentData);
+          if (widthChanged || heightChanged) {
+            // Ajustar tamanho interno do canvas para corresponder exatamente ao tamanho visual
+            // Isso corrige o problema de calibração no mobile
+            const currentData = signatureRef.current.isEmpty() 
+              ? null 
+              : signatureRef.current.toDataURL();
+            
+            canvas.width = containerWidth;
+            canvas.height = containerHeight;
+            
+            // Restaurar conteúdo se houver
+            if (currentData) {
+              signatureRef.current.fromDataURL(currentData);
+            }
           }
         }
       }
     };
 
+    // Detectar scroll para evitar ajustes durante o scroll
+    const handleScroll = () => {
+      isScrolling = true;
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+      }, 150);
+    };
+
     // Ajustar após um delay para garantir que o DOM está renderizado
     const timeoutId = setTimeout(ajustarCanvas, 200);
     
-    // Ajustar ao redimensionar
-    window.addEventListener('resize', ajustarCanvas);
+    // Ajustar ao redimensionar (com debounce)
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(ajustarCanvas, 250);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('orientationchange', () => {
       setTimeout(ajustarCanvas, 300);
     });
 
     return () => {
-      window.removeEventListener('resize', ajustarCanvas);
-      window.removeEventListener('orientationchange', ajustarCanvas);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('orientationchange', handleResize);
       clearTimeout(timeoutId);
+      clearTimeout(scrollTimeout);
+      clearTimeout(resizeTimeout);
     };
   }, [cautela]);
 
@@ -369,6 +400,19 @@ function Assinar() {
               <div 
                 className="signature-container"
                 ref={signatureContainerRef}
+                onTouchStart={(e) => {
+                  // Prevenir scroll quando tocar no canvas
+                  if (e.target.closest('.signature-canvas') || e.target.closest('canvas')) {
+                    e.stopPropagation();
+                  }
+                }}
+                onTouchMove={(e) => {
+                  // Prevenir scroll quando desenhando
+                  if (e.target.closest('.signature-canvas') || e.target.closest('canvas')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
               >
                 <SignatureCanvas
                   ref={signatureRef}
@@ -379,7 +423,14 @@ function Assinar() {
                       : 800,
                     height: typeof window !== 'undefined' && window.innerWidth < 768 
                       ? Math.min(300, window.innerHeight * 0.3)
-                      : 300
+                      : 300,
+                    onTouchStart: (e) => {
+                      e.stopPropagation();
+                    },
+                    onTouchMove: (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
                   }}
                   backgroundColor="#ffffff"
                   penColor="#000000"
