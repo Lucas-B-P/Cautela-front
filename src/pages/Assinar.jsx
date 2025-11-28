@@ -63,20 +63,33 @@ function Assinar() {
 
   const iniciarCamera = async () => {
     try {
+      setMessage({ type: '', text: '' });
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user' } // Câmera frontal
+        video: { 
+          facingMode: 'user', // Câmera frontal
+          width: { ideal: 640 },
+          height: { ideal: 480 }
+        } 
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setMostrarCamera(true);
-      }
+      setMostrarCamera(true);
+      
+      // Aguardar um pouco para garantir que o video element está pronto
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play().catch(err => {
+            console.error('Erro ao reproduzir vídeo:', err);
+          });
+        }
+      }, 100);
     } catch (error) {
       console.error('Erro ao acessar câmera:', error);
       setMessage({ 
         type: 'error', 
-        text: 'Erro ao acessar a câmera. Verifique as permissões.' 
+        text: 'Erro ao acessar a câmera. Verifique as permissões e tente novamente.' 
       });
+      setMostrarCamera(false);
     }
   };
 
@@ -109,8 +122,15 @@ function Assinar() {
   };
 
   const handleSubmit = async () => {
+    // Validar assinatura
     if (!signatureRef.current || signatureRef.current.isEmpty()) {
-      setMessage({ type: 'error', text: 'Por favor, assine o documento' });
+      setMessage({ type: 'error', text: 'Por favor, assine o documento antes de confirmar.' });
+      return;
+    }
+
+    // Validar foto (obrigatória)
+    if (!fotoBase64) {
+      setMessage({ type: 'error', text: 'Por favor, tire uma foto para verificação facial antes de confirmar.' });
       return;
     }
 
@@ -147,6 +167,16 @@ function Assinar() {
       setSubmitting(false);
     }
   };
+
+  // Atualizar video quando mostrarCamera mudar
+  useEffect(() => {
+    if (mostrarCamera && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch(err => {
+        console.error('Erro ao reproduzir vídeo:', err);
+      });
+    }
+  }, [mostrarCamera]);
 
   // Limpar stream ao desmontar componente
   useEffect(() => {
@@ -247,9 +277,9 @@ function Assinar() {
         {!jaAssinada && (
           <>
             <div className="card">
-              <h2>Assinatura Digital</h2>
+              <h2>Assinatura Digital <span style={{ color: '#dc2626', fontSize: '0.8em' }}>(Obrigatório)</span></h2>
               <p style={{ marginBottom: '20px', color: '#666' }}>
-                Por favor, assine o documento desenhando no campo abaixo:
+                Por favor, assine o documento desenhando no campo abaixo. Esta assinatura é obrigatória.
               </p>
               
               <div className="signature-container">
@@ -277,9 +307,9 @@ function Assinar() {
             </div>
 
             <div className="card">
-              <h2>Verificação Facial</h2>
+              <h2>Verificação Facial <span style={{ color: '#dc2626', fontSize: '0.8em' }}>(Obrigatório)</span></h2>
               <p style={{ marginBottom: '20px', color: '#666' }}>
-                Tire uma foto para verificação de identidade:
+                Tire uma foto para verificação de identidade. Esta verificação é obrigatória.
               </p>
 
               {!mostrarCamera && !fotoBase64 && (
@@ -299,12 +329,16 @@ function Assinar() {
                     ref={videoRef}
                     autoPlay
                     playsInline
+                    muted
                     style={{
                       width: '100%',
                       maxWidth: '640px',
                       border: '2px solid #dc2626',
                       borderRadius: '8px',
-                      marginBottom: '15px'
+                      marginBottom: '15px',
+                      backgroundColor: '#000',
+                      minHeight: '300px',
+                      objectFit: 'cover'
                     }}
                   />
                   <div className="camera-actions">
@@ -355,11 +389,41 @@ function Assinar() {
                 <button
                   className="btn btn-success"
                   onClick={handleSubmit}
-                  disabled={submitting}
-                  style={{ width: '100%', fontSize: '18px', padding: '15px' }}
+                  disabled={submitting || !signatureRef.current?.isEmpty === false || !fotoBase64}
+                  style={{ 
+                    width: '100%', 
+                    fontSize: '18px', 
+                    padding: '15px',
+                    opacity: (!signatureRef.current || signatureRef.current.isEmpty() || !fotoBase64) ? 0.6 : 1,
+                    cursor: (!signatureRef.current || signatureRef.current.isEmpty() || !fotoBase64) ? 'not-allowed' : 'pointer'
+                  }}
+                  title={
+                    (!signatureRef.current || signatureRef.current.isEmpty()) && !fotoBase64
+                      ? 'Complete a assinatura e tire uma foto para continuar'
+                      : !signatureRef.current || signatureRef.current.isEmpty()
+                      ? 'Complete a assinatura para continuar'
+                      : !fotoBase64
+                      ? 'Tire uma foto para continuar'
+                      : 'Confirmar assinatura e verificação facial'
+                  }
                 >
                   {submitting ? 'Salvando...' : 'Confirmar Assinatura e Verificação Facial'}
                 </button>
+                {(!signatureRef.current || signatureRef.current.isEmpty() || !fotoBase64) && (
+                  <p style={{ 
+                    marginTop: '15px', 
+                    color: '#dc2626', 
+                    fontSize: '14px', 
+                    textAlign: 'center',
+                    fontWeight: '500'
+                  }}>
+                    {!signatureRef.current || signatureRef.current.isEmpty()
+                      ? !fotoBase64
+                        ? '⚠️ Complete a assinatura e tire uma foto para continuar'
+                        : '⚠️ Complete a assinatura para continuar'
+                      : '⚠️ Tire uma foto para continuar'}
+                  </p>
+                )}
               </div>
             </div>
           </>
