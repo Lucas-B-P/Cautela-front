@@ -264,16 +264,42 @@ function Historico() {
                     )}
                   </div>
                   <div className="assinatura-preview">
-                    <img 
-                      src={assinatura.assinatura_base64} 
-                      alt={`Assinatura ${assinatura.tipo_assinatura}`}
-                      style={{ 
-                        maxWidth: '100%', 
-                        border: '1px solid #ddd', 
-                        borderRadius: '4px',
-                        marginTop: '10px'
-                      }}
-                    />
+                    <div style={{ marginBottom: '15px' }}>
+                      <h4 style={{ color: '#dc2626', marginBottom: '10px', fontSize: '14px', fontWeight: '600' }}>
+                        Assinatura Digital:
+                      </h4>
+                      <img 
+                        src={assinatura.assinatura_base64} 
+                        alt={`Assinatura ${assinatura.tipo_assinatura}`}
+                        style={{ 
+                          maxWidth: '100%', 
+                          border: '2px solid #dc2626', 
+                          borderRadius: '8px',
+                          marginTop: '10px',
+                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                        }}
+                      />
+                    </div>
+                    {assinatura.foto_base64 && (
+                      <div>
+                        <h4 style={{ color: '#dc2626', marginBottom: '10px', fontSize: '14px', fontWeight: '600' }}>
+                          Verificação Facial:
+                        </h4>
+                        <img 
+                          src={assinatura.foto_base64} 
+                          alt={`Foto ${assinatura.tipo_assinatura}`}
+                          style={{ 
+                            maxWidth: '100%', 
+                            maxHeight: '400px',
+                            border: '2px solid #dc2626', 
+                            borderRadius: '8px',
+                            marginTop: '10px',
+                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

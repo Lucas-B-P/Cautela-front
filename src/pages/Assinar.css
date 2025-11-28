@@ -264,3 +264,47 @@
   }
 }
 
+/* Estilos para câmera e foto */
+.camera-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.camera-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.foto-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.assinar-page .btn-primary {
+  background: #dc2626;
+  color: white;
+}
+
+.assinar-page .btn-primary:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+@media (max-width: 768px) {
+  .camera-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .camera-actions .btn {
+    width: 100%;
+  }
+}
+

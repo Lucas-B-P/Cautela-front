@@ -12,6 +12,10 @@ function Assinar() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const signatureRef = useRef(null);
+  const [fotoBase64, setFotoBase64] = useState(null);
+  const [mostrarCamera, setMostrarCamera] = useState(false);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
 
   useEffect(() => {
     carregarCautela();
@@ -57,6 +61,53 @@ function Assinar() {
     }
   };
 
+  const iniciarCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user' } // Câmera frontal
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setMostrarCamera(true);
+      }
+    } catch (error) {
+      console.error('Erro ao acessar câmera:', error);
+      setMessage({ 
+        type: 'error', 
+        text: 'Erro ao acessar a câmera. Verifique as permissões.' 
+      });
+    }
+  };
+
+  const pararCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setMostrarCamera(false);
+  };
+
+  const capturarFoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(videoRef.current, 0, 0);
+      const fotoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      setFotoBase64(fotoDataUrl);
+      pararCamera();
+    }
+  };
+
+  const removerFoto = () => {
+    setFotoBase64(null);
+  };
+
   const handleSubmit = async () => {
     if (!signatureRef.current || signatureRef.current.isEmpty()) {
       setMessage({ type: 'error', text: 'Por favor, assine o documento' });
@@ -70,13 +121,17 @@ function Assinar() {
       const assinaturaBase64 = signatureRef.current.toDataURL('image/png');
       
       await axios.post(`${API_URL}/assinaturas/${uuid}`, {
-        assinatura_base64: assinaturaBase64
+        assinatura_base64: assinaturaBase64,
+        foto_base64: fotoBase64
       });
 
       setMessage({ 
         type: 'success', 
-        text: 'Assinatura salva com sucesso! Obrigado.' 
+        text: 'Assinatura e verificação facial salvas com sucesso! Obrigado.' 
       });
+      
+      // Limpar foto após salvar
+      setFotoBase64(null);
       
       // Recarregar cautela para mostrar status atualizado
       setTimeout(() => {
@@ -92,6 +147,15 @@ function Assinar() {
       setSubmitting(false);
     }
   };
+
+  // Limpar stream ao desmontar componente
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -181,42 +245,124 @@ function Assinar() {
         )}
 
         {!jaAssinada && (
-          <div className="card">
-            <h2>Assinatura Digital</h2>
-            <p style={{ marginBottom: '20px', color: '#666' }}>
-              Por favor, assine o documento desenhando no campo abaixo:
-            </p>
-            
-            <div className="signature-container">
-              <SignatureCanvas
-                ref={signatureRef}
-                canvasProps={{
-                  className: 'signature-canvas',
-                  width: 800,
-                  height: 300
-                }}
-                backgroundColor="#ffffff"
-                penColor="#000000"
-              />
+          <>
+            <div className="card">
+              <h2>Assinatura Digital</h2>
+              <p style={{ marginBottom: '20px', color: '#666' }}>
+                Por favor, assine o documento desenhando no campo abaixo:
+              </p>
+              
+              <div className="signature-container">
+                <SignatureCanvas
+                  ref={signatureRef}
+                  canvasProps={{
+                    className: 'signature-canvas',
+                    width: 800,
+                    height: 300
+                  }}
+                  backgroundColor="#ffffff"
+                  penColor="#000000"
+                />
+              </div>
+
+              <div className="signature-actions">
+                <button
+                  className="btn btn-secondary"
+                  onClick={limparAssinatura}
+                  disabled={submitting}
+                >
+                  Limpar
+                </button>
+              </div>
             </div>
 
-            <div className="signature-actions">
-              <button
-                className="btn btn-secondary"
-                onClick={limparAssinatura}
-                disabled={submitting}
-              >
-                Limpar
-              </button>
-              <button
-                className="btn btn-success"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? 'Salvando...' : 'Confirmar Assinatura'}
-              </button>
+            <div className="card">
+              <h2>Verificação Facial</h2>
+              <p style={{ marginBottom: '20px', color: '#666' }}>
+                Tire uma foto para verificação de identidade:
+              </p>
+
+              {!mostrarCamera && !fotoBase64 && (
+                <button
+                  className="btn btn-primary"
+                  onClick={iniciarCamera}
+                  disabled={submitting}
+                  style={{ marginBottom: '20px' }}
+                >
+                  📷 Iniciar Câmera
+                </button>
+              )}
+
+              {mostrarCamera && (
+                <div className="camera-container">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    style={{
+                      width: '100%',
+                      maxWidth: '640px',
+                      border: '2px solid #dc2626',
+                      borderRadius: '8px',
+                      marginBottom: '15px'
+                    }}
+                  />
+                  <div className="camera-actions">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={pararCamera}
+                      disabled={submitting}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      className="btn btn-success"
+                      onClick={capturarFoto}
+                      disabled={submitting}
+                    >
+                      📸 Capturar Foto
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {fotoBase64 && (
+                <div className="foto-preview">
+                  <img
+                    src={fotoBase64}
+                    alt="Foto capturada"
+                    style={{
+                      width: '100%',
+                      maxWidth: '400px',
+                      border: '2px solid #dc2626',
+                      borderRadius: '8px',
+                      marginBottom: '15px'
+                    }}
+                  />
+                  <button
+                    className="btn btn-secondary"
+                    onClick={removerFoto}
+                    disabled={submitting}
+                  >
+                    Remover Foto
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
+
+            <div className="card">
+              <div className="signature-actions">
+                <button
+                  className="btn btn-success"
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  style={{ width: '100%', fontSize: '18px', padding: '15px' }}
+                >
+                  {submitting ? 'Salvando...' : 'Confirmar Assinatura e Verificação Facial'}
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>
