@@ -204,9 +204,20 @@
     padding: 20px;
   }
   
+  .signature-container {
+    padding: 10px;
+  }
+
   .signature-canvas {
     width: 100% !important;
-    height: 200px !important;
+    height: auto !important;
+    min-height: 200px;
+  }
+
+  .signature-container canvas {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 200px;
   }
   
   .info-row {
