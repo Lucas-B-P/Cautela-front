@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Admin from './pages/Admin';
 import Assinar from './pages/Assinar';
 import Historico from './pages/Historico';
+import Usuarios from './pages/Usuarios';
 import ProtectedRoute from './components/ProtectedRoute';
 import Theme from './components/Theme';
 import { getToken, logout, isTokenExpired } from './utils/auth';
@@ -65,6 +66,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Historico />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/usuarios" 
+          element={
+            <ProtectedRoute>
+              <Usuarios />
             </ProtectedRoute>
           } 
         />
